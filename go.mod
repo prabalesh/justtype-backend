@@ -1,4 +1,4 @@
-module justtype-backend
+module github.com/prabalesh/justtype-backend
 
 go 1.25.3
 

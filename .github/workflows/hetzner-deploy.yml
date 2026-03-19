@@ -18,20 +18,32 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-      - name: Debug SSH Agent
-        run: ssh-add -l
-
       - name: Deploy to Hetzner
         run: |
-          ssh -v -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
             set -e
+            
+            # Ensure the directory exists
+            mkdir -p /home/neo/zenko-backend
             cd /home/neo/zenko-backend
-            git pull origin main
+            
+            # Initialize git if not already present
+            if [ ! -d ".git" ]; then
+              echo "Initializing git repository..."
+              # Clone into current directory (.)
+              git clone https://github.com/prabalesh/justtype-backend.git .
+            else
+              echo "Existing repository found, pulling latest changes..."
+              git fetch origin main
+              git reset --hard origin/main
+            fi
             
             # Build the Go backend from root
+            echo "Building Go backend..."
             go build -o justtype-backend ./cmd/server
             
             # Restart or start the process via PM2
+            echo "Reloading PM2..."
             pm2 reload ecosystem.config.cjs || pm2 start ecosystem.config.cjs
             pm2 save
             

@@ -4,9 +4,9 @@ import (
 	"log"
 	"net/http"
 
-	"justtype-backend/internal/config"
-	"justtype-backend/internal/db"
-	internalHttp "justtype-backend/internal/http"
+	"github.com/prabalesh/justtype-backend/internal/config"
+	"github.com/prabalesh/justtype-backend/internal/db"
+	internalHttp "github.com/prabalesh/justtype-backend/internal/http"
 )
 
 var allowedOrigins = []string{

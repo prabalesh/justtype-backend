@@ -1,0 +1,37 @@
+name: Hetzner Deploy
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Deploy to Hetzner
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
+            set -e
+            cd /home/neo/zenko-backend
+            git pull origin main
+            
+            # Build the Go backend from root
+            go build -o justtype-backend ./cmd/server
+            
+            # Restart or start the process via PM2
+            pm2 reload ecosystem.config.cjs || pm2 start ecosystem.config.cjs
+            pm2 save
+            
+            # Briefly check logs
+            pm2 logs justtype-backend --lines 20 --no-daemon &
+            sleep 5
+            kill $!
+          EOF

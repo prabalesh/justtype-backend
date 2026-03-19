@@ -1,2 +1,37 @@
-.env
+# Binary
+justtype-backend
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Test binaries
+*.test
+
+# Output / Build
 dist/
+bin/
+
+# Environment
+.env
+.env.local
+
+# Dependency / Vendor
+vendor/
+
+# IDE / Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+
+# Logs
+*.log
+
+# Nginx config on server (outside repo)
+/etc/nginx/sites-available/api.zenko.prabalesh.com.conf
+/etc/nginx/sites-enabled/api.zenko.prabalesh.com.conf
